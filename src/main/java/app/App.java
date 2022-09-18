@@ -42,9 +42,9 @@ public class App {
 		//System.out.println(zipService.getZipByStateAndPop("MA", 500).size());
 		
 		//Cau 9: Tìm tất cả các bang (không trùng)
-		//zipService.getAllState().forEach(state -> System.out.println(state));
+		zipService.getAllState().forEach(state -> System.out.println(state));
 		
 		//Cau 11: Tính dân số trung bình của mỗi bang
-		zipService.getAllAvgState();
+		//zipService.getAllAvgState();
 	}
 }

@@ -1,5 +1,8 @@
 package util;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import com.mongodb.ConnectionString;
@@ -13,18 +16,28 @@ public class AtlasMongoClient {
 	private MongoClient mongoClient;
 	
 	private AtlasMongoClient() {
-		String uri = "mongodb+srv://letuan19431791:admin@letuan19431791.je4adoh.mongodb.net/?retryWrites=true&w=majority";
-		ConnectionString connectionString = new ConnectionString(uri);
-		MongoClientSettings clientSettings = 
-				MongoClientSettings
-				.builder()
-				.applicationName("Exercise")
-				.applyConnectionString(connectionString)
-				.applyToConnectionPoolSettings(builder -> builder.maxSize(0))
-				.applyToSocketSettings(builder -> builder.connectTimeout(5, TimeUnit.SECONDS))
-				.build();
-		
-		mongoClient = MongoClients.create(clientSettings);
+		try(InputStream stream = AtlasMongoClient.class.getClassLoader().getResourceAsStream("config.properties")){
+			Properties prop = new Properties();
+			
+			prop.load(stream);
+			
+			String uri = prop.getProperty("db.connect.url");
+			
+			ConnectionString connectionString = new ConnectionString(uri);
+			MongoClientSettings clientSettings = 
+					MongoClientSettings
+					.builder()
+					.applicationName("Exercise")
+					.applyConnectionString(connectionString)
+					.applyToConnectionPoolSettings(builder -> builder.maxSize(0))
+					.applyToSocketSettings(builder -> builder.connectTimeout(5, TimeUnit.SECONDS))
+					.build();
+			
+			mongoClient = MongoClients.create(clientSettings);
+		}catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
 	}
 	
 	public static synchronized AtlasMongoClient getInstane() {
